@@ -1,0 +1,29 @@
+# Activation du module de réécriture
+RewriteEngine On
+
+# Rediriger vers l'API ou les pages statiques
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Gestion des routes API
+RewriteRule ^api\.php/([a-zA-Z0-9_/-]*)$ api.php?endpoint=$1 [QSA,L]
+
+# Gestion des pages HTML
+RewriteRule ^([a-zA-Z0-9_-]+)\.html$ api.php?page=$1 [QSA,L]
+
+# Rediriger la racine vers le dashboard
+RewriteRule ^$ api.php [L]
+
+# Sécurité - Empêcher l'accès aux fichiers sensibles
+<FilesMatch "\.(sql|log|ini|config)$">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "^\.(htaccess|htpasswd)$">
+    Require all denied
+</FilesMatch>
+
+# Headers de sécurité
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "SAMEORIGIN"
+Header set X-XSS-Protection "1; mode=block"
